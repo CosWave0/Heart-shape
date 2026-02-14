@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Beating Heart Animation</title>
+    <title>Wave Propagation Heart</title>
     <style>
         body {
             margin: 0;
@@ -27,51 +27,59 @@
 </head>
 <body>
 
-<h1>❤️ Animated Heart</h1>
-<canvas id="canvas" width="600" height="600"></canvas>
+<h1>❤️ Wave Propagation Heart</h1>
+<canvas id="canvas" width="700" height="600"></canvas>
 
 <script>
     const canvas = document.getElementById("canvas");
     const ctx = canvas.getContext("2d");
 
-    let scaleFactor = 15;
     let time = 0;
+    const baseScale = 15;
 
-    function drawHeart(scale) {
+    function drawHeartWave() {
         ctx.beginPath();
 
         for (let t = 0; t < Math.PI * 2; t += 0.01) {
+
+            // Heart parametric equation
             let x = 16 * Math.pow(Math.sin(t), 3);
             let y = 13 * Math.cos(t)
                     - 5 * Math.cos(2 * t)
                     - 2 * Math.cos(3 * t)
                     - Math.cos(4 * t);
 
-            x *= scale;
-            y *= scale;
+            // Wave propagation effect
+            let wave = 1 + 0.15 * Math.sin(8 * t - time);
+            x *= baseScale * wave;
+            y *= baseScale * wave;
+
+            let drawX = canvas.width / 2 + x;
+            let drawY = canvas.height / 2 - y;
 
             if (t === 0) {
-                ctx.moveTo(canvas.width / 2 + x, canvas.height / 2 - y);
+                ctx.moveTo(drawX, drawY);
             } else {
-                ctx.lineTo(canvas.width / 2 + x, canvas.height / 2 - y);
+                ctx.lineTo(drawX, drawY);
             }
         }
 
         ctx.closePath();
 
-        ctx.shadowBlur = 25;
+        // Glow effect
+        ctx.shadowBlur = 30;
         ctx.shadowColor = "red";
-        ctx.fillStyle = "red";
-        ctx.fill();
+        ctx.strokeStyle = "red";
+        ctx.lineWidth = 2;
+        ctx.stroke();
     }
 
     function animate() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        let beat = 1 + 0.05 * Math.sin(time);
-        drawHeart(scaleFactor * beat);
+        drawHeartWave();
 
-        time += 0.1;
+        time += 0.08; // wave speed
         requestAnimationFrame(animate);
     }
 
